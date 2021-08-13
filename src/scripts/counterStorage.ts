@@ -30,11 +30,9 @@ export default class CounterStorage {
                 }
             }
 
-            console.log(Utils.formatDate(date));
             date.setMilliseconds(date.getMilliseconds() - 864e5);
         }
 
-        console.log(accumalativeCounter);
         return accumalativeCounter;
     }
     

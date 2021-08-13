@@ -40,7 +40,6 @@ async function main(): Promise<void> {
     // Save loop
     setInterval(async () => {
         await CounterStorage.set(counter);
-        console.log('Saved data!!!', counter);
     }, saveIntervalTime)
 }
 

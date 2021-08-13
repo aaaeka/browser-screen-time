@@ -55,7 +55,6 @@ class Popup extends React.Component<PopupProps, PopupState> {
         this.setState({ counter: counter,
                         mostUsedSites: CounterStorage.mostUsed(counter)
         });
-        console.log(this.state.mostUsedSites)
     }
 
     async changeTab(newTab: CounterTimespanData): Promise<void> {
