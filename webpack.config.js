@@ -53,5 +53,5 @@ module.exports = {
             ]
         })
     ],
-    devtool: 'inline-cheap-source-map'
+    devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'inline-cheap-source-map'
 }
