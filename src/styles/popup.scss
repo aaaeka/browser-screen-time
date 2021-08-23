@@ -69,7 +69,9 @@ button {
     margin: 16px 8px;
 
     .app {
-        display: flex;
+        display: grid;
+        grid-template-columns: 14px auto 72px;
+        grid-template-rows: auto;
         width: 100%;
         gap: 8px;
         align-items: center;
@@ -83,7 +85,10 @@ button {
 
         .url {
             font-weight: 500;
-            flex-grow: 2;
+            max-width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         .time {
