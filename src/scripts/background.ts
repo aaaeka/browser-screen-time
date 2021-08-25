@@ -1,7 +1,7 @@
 import { browser } from 'webextension-polyfill-ts'
 import CounterStorage from './counterStorage'
 import Awake from './awake'
-import { Counter } from './types'
+import Counter from './counter'
 
 const saveIntervalTime = 15000; // Amount of time in millisecond it takes for counter changes to be saved
 
@@ -22,10 +22,7 @@ async function iterateCounter(counter: Counter): Promise<Counter> {
 
 async function main(): Promise<void> {
     // Initialise counter
-    let counter: Counter = await CounterStorage.get() ?? {
-        netTime: 0,
-        websiteTime: {}
-    };
+    let counter = await CounterStorage.get();
 
     // Main loop
     const awake = new Awake();

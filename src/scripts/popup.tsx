@@ -1,7 +1,10 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { subDays } from 'date-fns'
 import CounterStorage from './counterStorage'
-import { Counter, WebsiteData, CounterTimespans, CounterTimespanData, CounterTimespanKind } from './types'
+import Counter from './counter'
+import { browser } from 'webextension-polyfill-ts'
+import { WebsiteData, CounterTimespanData } from './types'
 
 import TabButton from './components/tabButton'
 import TimeCircle from './components/timeCircle'
@@ -13,74 +16,82 @@ interface PopupProps {
 }
 
 interface PopupState {
-    selectedTab: CounterTimespanData,
+    selectedTab: number,
     counter: Counter,
     mostUsedSites: Array<WebsiteData>
 }
 
 class Popup extends React.Component<PopupProps, PopupState> {
-    private timespans: CounterTimespans;
+    private timespans: Array<CounterTimespanData>;
 
     constructor(props: PopupProps) {
         super(props);
 
-        this.timespans = {
-            today: {
-                kind: CounterTimespanKind.Today,
+        this.timespans = [
+            {
+                interval: [new Date, new Date],
                 name: 'today',
                 fullName: 'Today'
             },
-            week: {
-                kind: CounterTimespanKind.Week,
+            {
+                interval: [subDays(new Date, 7), new Date],
                 name: 'week',
                 fullName: 'This week'
             },
-            month: {
-                kind: CounterTimespanKind.Month,
+            {
+                interval: [subDays(new Date, 30), new Date],
                 name: 'month',
                 fullName: 'This month'
             }
-        }
+        ]
 
         this.state = {
-            selectedTab: this.timespans.today,
+            selectedTab: 0,
             counter: null,
             mostUsedSites: null
         }
     }
 
     async componentDidMount() {
-        let counter = await CounterStorage.get(this.state.selectedTab.kind);
+        let counter = await CounterStorage.get(this.timespans[this.state.selectedTab].interval);
 
         this.setState({ counter: counter,
-                        mostUsedSites: CounterStorage.mostUsed(counter)
+                        mostUsedSites: counter.mostUsed()
         });
     }
 
-    async changeTab(newTab: CounterTimespanData): Promise<void> {
-        let counter = await CounterStorage.get(newTab.kind);
+    async changeTab(newTab: number): Promise<void> {
+        if (newTab === this.state.selectedTab) {
+            return;
+        }
+
+        let counter = await CounterStorage.get(this.timespans[newTab].interval);
 
         this.setState({ 
             selectedTab: newTab,
             counter: counter,
-            mostUsedSites: CounterStorage.mostUsed(counter)
+            mostUsedSites: counter.mostUsed()
         }); 
     }
 
+    openInfoPage() {
+        browser.tabs.create({
+            active: true,
+            url: 'info.html'
+        });
+    }
+
     render() {
-        const tabButtons = [];
-        let i = 0;
-        for (const timespan of Object.values(this.timespans)) {
-            tabButtons.push(
-                <TabButton
-                    key={i}
-                    currentTab={timespan}
-                    selectedTab={this.state.selectedTab}
-                    onClick={() => { this.changeTab(timespan) }}
-                />
-            );
-            i++;
-        }
+        const tabButtons = this.timespans.map((timespan: CounterTimespanData, index: number) => (
+            <TabButton
+                key={index}
+                tabIndex={index}
+                selectedIndex={this.state.selectedTab}
+                shortName={timespan.name}
+                fullName={timespan.fullName}
+                onClick={() => { this.changeTab(index) }}
+            />
+        ));
 
         const mostUsedSites = this.state.counter ? this.state.mostUsedSites.map((value: WebsiteData, index: number) => (
             <AppTime
@@ -91,17 +102,18 @@ class Popup extends React.Component<PopupProps, PopupState> {
 
         return (
             <div className="popup">
-                <div className="timeSpanButtons">
+                <div className="tabButtons">
                     {tabButtons}
                 </div>
                 <TimeCircle 
                     netTime={this.state.counter ? this.state.counter.netTime : null}
+                    subtitle={this.timespans[this.state.selectedTab].fullName}
                     mostUsedSites={this.state.mostUsedSites}
-                    selectedTab={this.state.selectedTab}
                 />
                 <div className="appTime">
                     {mostUsedSites}
                 </div>
+                <button className="moreInfoBtn" onClick={() => { this.openInfoPage() }}>More info</button>
             </div>
         )
     }

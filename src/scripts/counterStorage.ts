@@ -1,26 +1,30 @@
 import Config from './config'
 import Utils from './utils'
-import { Counter, CounterTimespanKind, WebsiteData } from './types'
+import Counter from './counter'
+import { WebsiteData, CounterTimespanInterval } from './types'
+import { browser } from 'webextension-polyfill-ts'
+import { isEqual, addDays, isAfter } from 'date-fns'
 
 export default class CounterStorage {
     static async set(counter: Counter) {
         Config.set(Utils.getTodaysDate(), counter);
     }
 
-    static async get(timespan: CounterTimespanKind = CounterTimespanKind.Today): Promise<Counter> {
-        let date = new Date;
-        
-        let accumalativeCounter: Counter = {
-            netTime: 0,
-            websiteTime: {}
-        };
-
-        if (timespan === CounterTimespanKind.Today) {
-            return await Config.get(Utils.getTodaysDate());
+    static async get(interval: CounterTimespanInterval = [new Date, new Date]): Promise<Counter> {
+        if (isEqual(interval[0], interval[1])) {
+            const data = await Config.get(Utils.formatDate(interval[0]));
+            if (data) {
+                return new Counter(data.netTime, data.websiteTime);
+            }
+            
+            return new Counter;
         }
 
-        for (let i: number = timespan; i > 0; i--) { 
-            let data: Counter = await Config.get(Utils.formatDate(date));
+        let accumalativeCounter = new Counter;
+
+        let currentDate = interval[0];
+        while (!isAfter(currentDate, interval[1])) {
+            let data: Counter = await Config.get(Utils.formatDate(currentDate));
 
             if (data) {
                 accumalativeCounter.netTime += data.netTime;
@@ -30,41 +34,27 @@ export default class CounterStorage {
                 }
             }
 
-            date.setMilliseconds(date.getMilliseconds() - 864e5);
+            currentDate = addDays(currentDate, 1);
         }
 
         return accumalativeCounter;
     }
     
-    static mostUsed(counter: Counter): Array<WebsiteData> {
-        // Convert map to array so sorting operations can be made
-        let sites: Array<WebsiteData> = [];
-        for (const [url, time] of Object.entries(counter.websiteTime)) {
-            sites.push({
-                time: time,
-                url: url,
-                color: null,
-                percentage: time / counter.netTime * 100
-            });
+    static async getSavedDates(): Promise<Array<Date>> {
+        const allData = await browser.storage.local.get();
+        let dates: Array<Date> = [];
+        
+        for (const key of Object.keys(allData)) {
+            // Only parse keys that start with 20
+            // I guess it wont work in the 22nd century
+            // But hey what can you do
+            if (!key.startsWith('20')) {
+                return;
+            }
+            
+            dates.push(new Date(key)) 
         }
-
-        let amountOfSites = 4;
-        let sorted = sites.sort((a: any, b: any) => b.time - a.time);
-        // Slice & give colors to most used sites
-        const colors = ['#227C9D', '#17C3B2', '#FFCB77', '#FE6D73'];
-        let mostUsed: Array<WebsiteData> = sorted.slice(0, amountOfSites).map((value: WebsiteData, i: number) => Object.assign(value, { color: colors[i] }));
-        // Add additional "other" site which has all the other sites' time combined
-        if (sorted.length > amountOfSites) {
-            const time = sorted.slice(amountOfSites, sorted.length - 1).reduce((accumulator: number, current: WebsiteData): number => accumulator + current.time, 1);
-            let other: WebsiteData = { 
-                time: time,
-                url: 'other',
-                color: '#CFCFCF',
-                percentage: time / counter.netTime * 100
-            };
-            mostUsed.push(other);
-        }
-
-        return mostUsed;
+        
+        return dates;
     }
 }

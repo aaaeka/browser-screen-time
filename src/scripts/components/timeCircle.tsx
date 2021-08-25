@@ -1,14 +1,14 @@
 import * as React from 'react'
 import Utils from '../utils';
-import { CounterTimespanData, WebsiteData } from '../types'
+import { WebsiteData } from '../types'
 
 interface TimeCircleState {
 }
 
 interface TimeCircleProps {
     netTime: number,
-    mostUsedSites: Array<WebsiteData>,
-    selectedTab: CounterTimespanData
+    subtitle: string,
+    mostUsedSites: Array<WebsiteData>
 }
 
 export default class TimeCircle extends React.Component<TimeCircleProps, TimeCircleState> {
@@ -44,7 +44,7 @@ export default class TimeCircle extends React.Component<TimeCircleProps, TimeCir
                 <svg height="200" width="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                     {this.renderCircleSVG()}
                 </svg>
-                <span className="timeSpan">{this.props.selectedTab.fullName}</span>
+                <span className="timeSpan">{this.props.subtitle}</span>
                 <span className="netTime">{Utils.formatTime(this.props.netTime)}</span>
             </div>
         )

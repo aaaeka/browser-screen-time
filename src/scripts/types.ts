@@ -10,29 +10,14 @@ export interface WebsiteMap {
     [key: string]: number
 }
 
-export interface Counter {
-    netTime: number,
-    websiteTime: WebsiteMap
-}
-
-export enum CounterTimespanKind {
-    Today = 1,
-    Week = 7,
-    Month = 30
-}
+export type CounterTimespanInterval = [Date, Date];
 
 export interface CounterTimespanData {
-    kind: number,
+    interval: CounterTimespanInterval,
     name: string,
     fullName: string
 }
 
-export interface CounterTimespans {
-    today: CounterTimespanData,
-    week: CounterTimespanData,
-    month: CounterTimespanData
-}
- 
 export interface PlayingMedia {
     videoSource: string,
     url: string,

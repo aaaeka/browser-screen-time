@@ -7,6 +7,10 @@ module.exports = {
             import: './src/scripts/popup.tsx',
             filename: 'popup.js'
         },
+        info: {
+            import: './src/scripts/info.tsx',
+            filename: 'info.js'
+        },
         background: {
             import: './src/scripts/background.ts',
             filename: 'background.js'
@@ -15,10 +19,6 @@ module.exports = {
             import: './src/scripts/videoCheck.ts',
             filename: 'videoCheck.js'
         },
-        style: {
-            import: './src/styles/popup.scss',
-            filename: 'popup.css'
-        }
     },
     output: {
         path: path.resolve(__dirname, 'dist')
@@ -37,7 +37,11 @@ module.exports = {
                     "css-loader",
                     "sass-loader"
                 ],
-            }
+            },
+            {
+                test: /\.css$/i,
+                use: ["style-loader", "css-loader"],
+            },
         ]
     },
     resolve: {

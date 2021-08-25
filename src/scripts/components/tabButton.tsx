@@ -1,18 +1,19 @@
 import * as React from 'react'
-import { CounterTimespanData } from '../types'
 
 interface TabButtonProps {
-    currentTab: CounterTimespanData
-    selectedTab: CounterTimespanData,
+    tabIndex: number,
+    selectedIndex: number,
+    shortName: string,
+    fullName: string,
     onClick: Function
 }
 
 export default function TabButton(props: TabButtonProps) {
     return (
         <button 
-            className={`${props.currentTab.name} ${props.currentTab.name === props.selectedTab.name ? 'active': ''}`}
+            className={`${props.shortName} ${props.tabIndex === props.selectedIndex ? 'active': ''}`}
             onClick={() => props.onClick()} >
-            {props.currentTab.fullName}
+            {props.fullName}
         </button>
     )
 }

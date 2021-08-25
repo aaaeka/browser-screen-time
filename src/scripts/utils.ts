@@ -1,6 +1,10 @@
 export default class Utils {
     static formatDate(date: Date): string {
-        return `${date.getFullYear()} ${date.getMonth()} ${date.getDate()}`;
+        return `${date.getFullYear()} ${date.getMonth() + 1} ${date.getDate()}`;
+    }
+
+    static formatDateShort(date: Date): string {
+        return `${date.getMonth() + 1}/${date.getDate()}`;
     }
 
     static getTodaysDate(): string {
