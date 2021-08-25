@@ -1,6 +1,6 @@
 {
   "name": "browser-screen-time",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "description": "Keep track of the amount of time you spend on the internet",
   "main": "background.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "browser"
   ],
   "author": "aaaeka",
-  "license": "GPL-3.0",
+  "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/aaaeka/browser-screen-time/issues"
   },
@@ -28,6 +28,7 @@
     "@types/react": "^17.0.15",
     "@types/react-dom": "^17.0.9",
     "@types/webextension-polyfill": "^0.8.0",
+    "@types/react-datepicker": "^4.1.4",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.2.0",
     "sass": "^1.36.0",
@@ -40,7 +41,6 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
-    "@types/react-datepicker": "^4.1.4",
     "date-fns": "^2.23.0",
     "react": "^17.0.2",
     "react-datepicker": "^4.2.1",
