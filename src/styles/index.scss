@@ -123,13 +123,24 @@
         }
     }
 
-    .settingsBtn {
+    .smallButton {
         position: absolute;
-        bottom: 16px;
-        left: 16px;
         display: flex;
+        height: 42px;
+        width: 42px;
         padding: 8px;
+        background-color: white;
         border: 1px solid #C4C4C4;
+
+        &.settings {
+            bottom: 16px;
+            left: 16px;
+        }
+
+        &.refresh {
+            bottom: 16px;
+            left: 66px;
+        }
 
         &:hover {
             background-color: #E5E5E5;
