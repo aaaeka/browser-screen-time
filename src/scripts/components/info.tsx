@@ -1,18 +1,16 @@
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
 import { isEqual, isAfter } from 'date-fns'
-import Utils from './utils'
-import CounterStorage from './counterStorage'
-import Counter from './counter'
-import { CounterTimespanInterval, WebsiteData } from './types'
+import Utils from '../utils'
+import CounterStorage from '../counterStorage'
+import Counter from '../counter'
+import { CounterTimespanInterval, WebsiteData } from '../types'
 
-import NamedField from './components/namedField'
-import TabButton from './components/tabButton'
-import TimeCircle from './components/timeCircle'
-import AppTime from './components/appTime'
+import NamedField from './namedField'
+import TabButton from './tabButton'
+import TimeCircle from './timeCircle'
+import AppTime from './appTime'
 import DatePicker from 'react-datepicker'
 
-import '../styles/info.scss'
 import 'react-datepicker/dist/react-datepicker.css'
 
 interface InfoProps {
@@ -25,10 +23,10 @@ interface InfoState {
     counter: Counter
 }
 
-class Info extends React.Component<InfoProps, InfoState> {
+export default class Info extends React.Component<InfoProps, InfoState> {
     constructor(props: InfoProps) {
         super(props);
-        
+
         this.state = {
             selectedTab: 0,
             dateInterval: [new Date, new Date],
@@ -43,21 +41,21 @@ class Info extends React.Component<InfoProps, InfoState> {
             counter: await CounterStorage.get(this.state.dateInterval)
         });
     }
-    
+
     changeTab(newTab: number): void {
         if (newTab === this.state.selectedTab) {
             return;
         }
-        
+
         this.setState({
             selectedTab: newTab
         });
-        
+
         if (newTab === 0) {
             this.onDateChange([this.state.dateInterval[0], this.state.dateInterval[0]]);
         }
     }
-    
+
     async onDateChange(interval: CounterTimespanInterval): Promise<void> {
         if (isAfter(interval[0], interval[1])) {
             interval[1] = interval[0];
@@ -81,9 +79,9 @@ class Info extends React.Component<InfoProps, InfoState> {
                 shortName: 'timespan',
                 fullName: 'Timespan'
             }
-        ].map(value => 
+        ].map(value =>
             <TabButton
-                key={value.key} 
+                key={value.key}
                 tabIndex={value.key}
                 selectedIndex={this.state.selectedTab}
                 shortName={value.shortName}
@@ -97,7 +95,7 @@ class Info extends React.Component<InfoProps, InfoState> {
             timespanSelect = (
                 <div className="timeSelect single">
                     <NamedField title="Select day" centerTitle>
-                        <DatePicker 
+                        <DatePicker
                             selected={this.state.dateInterval[0]}
                             onChange={(date: Date) => this.onDateChange([date, date])}
                             includeDates={this.state.availableDates}
@@ -109,7 +107,7 @@ class Info extends React.Component<InfoProps, InfoState> {
             timespanSelect = (
                 <div className="timeSelect timespan">
                     <NamedField title="From" centerTitle>
-                        <DatePicker 
+                        <DatePicker
                             selected={this.state.dateInterval[0]}
                             onChange={(date: Date) => this.onDateChange([date, this.state.dateInterval[1]])}
                             includeDates={this.state.availableDates}
@@ -117,7 +115,7 @@ class Info extends React.Component<InfoProps, InfoState> {
                     </NamedField>
                     <span>-</span>
                     <NamedField title="To" centerTitle>
-                        <DatePicker 
+                        <DatePicker
                             selected={this.state.dateInterval[1]}
                             onChange={(date: Date) => this.onDateChange([this.state.dateInterval[0], date])}
                             includeDates={this.state.availableDates}
@@ -132,6 +130,7 @@ class Info extends React.Component<InfoProps, InfoState> {
             <AppTime key={index} websiteData={data} />
         )) : null;
 
+
         return (
             <div className="info">
                 <div className="left">
@@ -139,16 +138,16 @@ class Info extends React.Component<InfoProps, InfoState> {
                         {tabButtons}
                     </div>
                     {timespanSelect}
-                    <TimeCircle 
+                    <TimeCircle
                         netTime={this.state.counter ? this.state.counter.netTime : null}
-                        subtitle={isEqual(this.state.dateInterval[0], this.state.dateInterval[1]) ? 
+                        subtitle={isEqual(this.state.dateInterval[0], this.state.dateInterval[1]) ?
                             Utils.formatDateShort(this.state.dateInterval[0]) :
                             `${Utils.formatDateShort(this.state.dateInterval[0])} - ${Utils.formatDateShort(this.state.dateInterval[1])}`}
                         mostUsedSites={this.state.counter ? this.state.counter.mostUsed() : null}
                     />
                 </div>
                 <div className="right">
-                    <NamedField title="test">
+                    <NamedField title="App time">
                         <div className="appTime">
                             {appSidebar}
                         </div>
@@ -156,7 +155,5 @@ class Info extends React.Component<InfoProps, InfoState> {
                 </div>
             </div>
         )
-    }    
+    }
 }
-
-ReactDOM.render(<Info />, document.getElementById('root'));

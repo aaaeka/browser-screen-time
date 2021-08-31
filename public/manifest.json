@@ -28,7 +28,8 @@
     "permissions": [
         "storage",
         "idle",
-        "tabs"
+        "tabs",
+        "notifications"
     ],
     "manifest_version": 2
 }

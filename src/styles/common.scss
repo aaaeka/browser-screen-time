@@ -13,6 +13,15 @@ button {
     cursor: pointer;
 }
 
+.icon {
+    height: 24px;
+    width: 24px;
+
+    * {
+        fill: #8E8E8E;
+    }
+}
+
 .namedField {
     position: relative;
     border-radius: 8px;
@@ -30,6 +39,10 @@ button {
     
     .content {
         width: 100%;
+        height: 100%;
+        overflow: auto;
+        scrollbar-color: #C4C4C4 white;
+        scrollbar-width: thin;
     }
 }
 

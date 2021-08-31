@@ -1,18 +1,23 @@
-import Config from './config'
 import Utils from './utils'
 import Counter from './counter'
-import { WebsiteData, CounterTimespanInterval } from './types'
+import { CounterTimespanInterval } from './types'
 import { browser } from 'webextension-polyfill-ts'
 import { isEqual, addDays, isAfter } from 'date-fns'
 
 export default class CounterStorage {
     static async set(counter: Counter) {
-        Config.set(Utils.getTodaysDate(), counter);
+        browser.storage.local.set({ [Utils.getTodaysDate()]: counter });
+    }
+
+    static async getSingleDay(date: Date): Promise<Counter> {
+        const key = Utils.formatDate(date);
+        return (await browser.storage.local.get(key))[key];
     }
 
     static async get(interval: CounterTimespanInterval = [new Date, new Date]): Promise<Counter> {
         if (isEqual(interval[0], interval[1])) {
-            const data = await Config.get(Utils.formatDate(interval[0]));
+            const data = await this.getSingleDay(interval[0]);
+
             if (data) {
                 return new Counter(data.netTime, data.websiteTime);
             }
@@ -24,7 +29,7 @@ export default class CounterStorage {
 
         let currentDate = interval[0];
         while (!isAfter(currentDate, interval[1])) {
-            let data: Counter = await Config.get(Utils.formatDate(currentDate));
+            const data = await this.getSingleDay(currentDate);
 
             if (data) {
                 accumalativeCounter.netTime += data.netTime;
@@ -49,9 +54,9 @@ export default class CounterStorage {
             // I guess it wont work in the 22nd century
             // But hey what can you do
             if (!key.startsWith('20')) {
-                return;
+                continue;
             }
-            
+
             dates.push(new Date(key)) 
         }
         

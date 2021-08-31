@@ -8,8 +8,8 @@ module.exports = {
             filename: 'popup.js'
         },
         info: {
-            import: './src/scripts/info.tsx',
-            filename: 'info.js'
+            import: './src/scripts/index.tsx',
+            filename: 'index.js'
         },
         background: {
             import: './src/scripts/background.ts',

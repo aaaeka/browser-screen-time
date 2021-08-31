@@ -77,7 +77,7 @@ class Popup extends React.Component<PopupProps, PopupState> {
     openInfoPage() {
         browser.tabs.create({
             active: true,
-            url: 'info.html'
+            url: 'index.html'
         });
     }
 

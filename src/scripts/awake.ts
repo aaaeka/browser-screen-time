@@ -1,5 +1,5 @@
 import { browser, Idle } from 'webextension-polyfill-ts'
-import { PlayingMedia } from './types'
+import { MsgEvent, PlayingMedia, PlayingMediaChangeEvent } from './types'
 
 export default class Awake {
     idle: boolean
@@ -22,13 +22,18 @@ export default class Awake {
 
         // Keep track of how many different media sources are playing
         let currentlyPlaying: Array<PlayingMedia> = [];
-        browser.runtime.onMessage.addListener((message: PlayingMedia) => {
-            if (message.state === 'playing') {
-                currentlyPlaying.push(message);
+        browser.runtime.onMessage.addListener((message: MsgEvent) => {
+            if (message.type !== 'playingMedia') {
+                return;
+            }
+            const media = (message as PlayingMediaChangeEvent).playingMedia;
+
+            if (media.state === 'playing') {
+                currentlyPlaying.push(media);
             } else {
-                currentlyPlaying = currentlyPlaying.filter((media: PlayingMedia) => 
-                    media.videoSource !== message.videoSource &&
-                    media.url !== message.url
+                currentlyPlaying = currentlyPlaying.filter((item: PlayingMedia) =>
+                    item.videoSource !== media.videoSource &&
+                    item.url !== media.url
                 )
             }
             this.mediaPlaying = currentlyPlaying.length !== 0;
