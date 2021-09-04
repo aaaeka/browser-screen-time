@@ -31,12 +31,12 @@ export default class Awake {
             if (media.state === 'playing') {
                 currentlyPlaying.push(media);
             } else {
-                currentlyPlaying = currentlyPlaying.filter((item: PlayingMedia) =>
-                    item.videoSource !== media.videoSource &&
-                    item.url !== media.url
-                )
+                // Remove the media if it matches
+                const sameMediaCheck = (item: PlayingMedia) => !(item.videoSource === media.videoSource && item.url === media.url);
+                currentlyPlaying = currentlyPlaying.filter(sameMediaCheck);
             }
             this.mediaPlaying = currentlyPlaying.length !== 0;
+            console.log(media, currentlyPlaying.length)
         });
 
         browser.windows.onFocusChanged.addListener(async () => {

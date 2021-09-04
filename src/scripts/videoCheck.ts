@@ -21,6 +21,10 @@ function createEvents(): void {
             video.playingMedia.state = 'paused';
             browser.runtime.sendMessage(video);
         });
+        elem.addEventListener('emptied', () => {
+            video.playingMedia.state = 'paused';
+            browser.runtime.sendMessage(video);
+        });
         window.addEventListener('unload', () => {
             video.playingMedia.state = 'paused';
             browser.runtime.sendMessage(video);
