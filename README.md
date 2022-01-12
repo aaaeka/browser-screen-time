@@ -8,10 +8,12 @@
 Browser screen time is an extension which helps you track of the amount of time you spend online
 
 ## Downloading the extension
-Currently the extension is only available on firefox, working on getting it on the chrome store.
+
+### Chrome
+https://chrome.google.com/webstore/detail/browser-screen-time/nlkcecddkejakmaipagbcemeohfomedn
 
 ### Firefox
-https://addons.mozilla.org/en-US/firefox/addon/browser-screen-time/
+https://addons.mozilla.org/en-US/firefox/addon/browser-screen-time
 
 ## Building the extension
-Run ```npm install``` to install dependencies, then ```npm run dev``` or ```npm run watch``` to watch for changes.
+Run ```npm install``` to install dependencies, then ```npm run dev``` to build, or ```npm run watch``` to build and then watch for changes.
