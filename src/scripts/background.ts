@@ -1,5 +1,4 @@
 import { browser } from 'webextension-polyfill-ts'
-import { endOfDay } from 'date-fns'
 import CounterStorage from './counterStorage'
 import SettingsStorage from './settingsStorage'
 import Awake from './awake'
@@ -10,12 +9,12 @@ import { SettingsChangeEvent, SettingsData } from './types'
 const saveIntervalTime = 15000; // Amount of time in millisecond it takes for counter changes to be saved
 
 let settings: SettingsData;
-let dayEnd: Date;
+let currentTime: Date;
 
 async function iterateCounter(counter: Counter): Promise<Counter> {
     // If it's a new day return a new counter
-    if (dayEnd < new Date) {
-        dayEnd = endOfDay(new Date);
+    if (new Date().getDate() != currentTime.getDate()) {
+        currentTime = new Date;
         return await CounterStorage.get();
     }
 
@@ -58,7 +57,7 @@ async function main(): Promise<void> {
 
     // Initialize counter
     let counter = await CounterStorage.get();
-    dayEnd = endOfDay(new Date);
+    currentTime = new Date;
 
     // Main loop
     const awake = new Awake;
@@ -72,7 +71,9 @@ async function main(): Promise<void> {
 
     // Save loop
     setInterval(async () => {
-        await CounterStorage.set(counter);
+        if (awake.available()) {
+            await CounterStorage.set(counter);
+        }
     }, saveIntervalTime)
 }
 
