@@ -25,7 +25,7 @@ export interface MsgEvent {
 export interface PlayingMedia {
     videoSource: string,
     url: string,
-    state: 'playing' | 'paused'
+    state: 'playing' | 'paused' | 'stopAll'
 }
 
 export interface PlayingMediaChangeEvent extends MsgEvent {
@@ -33,7 +33,7 @@ export interface PlayingMediaChangeEvent extends MsgEvent {
     playingMedia: PlayingMedia
 }
 
-export type SettingsDataType = boolean | number | string;
+export type SettingsDataType = boolean | string;
 
 export interface SettingsData {
     [key: string]: SettingsDataType

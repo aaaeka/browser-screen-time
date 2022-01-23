@@ -83,13 +83,12 @@
         form {
             h1 {
                 font-size: 1.5em;
-                margin-bottom: 12px;
             }
 
             h2 {
                 text-transform: uppercase;
                 color: #8E8E8E;
-                margin-bottom: 12px;
+                margin: 12px 0;
             }
 
             input[type=checkbox] {
@@ -97,13 +96,16 @@
             }
 
             p {
-                margin-top: 8px;
-                margin-right: 8px;
                 display: inline-block;
             }
 
             select {
-                display: inline;
+                display: inline-block;
+                margin: 0 4px;
+            }
+
+            br {
+                margin: 4px;
             }
 
             div.disabled {

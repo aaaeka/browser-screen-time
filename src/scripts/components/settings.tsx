@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { browser } from 'webextension-polyfill-ts'
+import { browser, Tabs } from 'webextension-polyfill-ts'
 import SettingsStorage from '../settingsStorage'
 import { SettingsData, SettingsDataType, SettingsChangeEvent } from '../types'
 
@@ -46,25 +46,48 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
             settings: currentSettings
         });
 
-        // Send settings change event to background script
         const msg: SettingsChangeEvent = {
             type: 'settings',
             settings: currentSettings
         }
 
+        // Send settings change message to background or popup
         browser.runtime.sendMessage(msg);
+
+        // Send settings change event to content script tabs
+        browser.tabs.query({
+            status: 'complete'
+        }).then((tabs: Array<Tabs.Tab>) => {
+            for (const tab of tabs) {
+                browser.tabs.sendMessage(tab.id, msg);
+            }
+        });
     }
 
     render() {
         const mainContent = this.state.settings ? (
             <form>
                 <h1>Settings</h1>
+                <h2>General</h2>
+                <p>Consider the browser idle after</p>
+                <select name="idleTimer" value={this.state.settings.idleTimer as string} onChange={this.handleChange}>
+                    <option value="15">15 seconds</option>
+                    <option value="20">20 seconds</option>
+                    <option value="30">30 seconds</option>
+                    <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
+                </select>
+                <br />
+                <input type="checkbox" name="videoCheck" checked={this.state.settings.videoCheck as boolean} onChange={this.handleChange} />
+                <label htmlFor="videoCheck">Continue counting time when watching a video</label>
+                <br />
                 <h2>Notifications</h2>
                 <input type="checkbox" name="notifications" checked={this.state.settings.notifications as boolean} onChange={this.handleChange} />
                 <label htmlFor="notifications">Notify me when I spend too much time on one site</label>
+                <br />
                 <div className={`${!this.state.settings.notifications ? 'disabled' : ''}`}>
                     <p>Remind me every</p>
-                    <select name="notificationTimer" value={this.state.settings.notificationTimer.toString()} onChange={this.handleChange}>
+                    <select name="notificationTimer" value={this.state.settings.notificationTimer as string} onChange={this.handleChange}>
                         <option value="900">15 minutes</option>
                         <option value="1800">30 minutes</option>
                         <option value="3600">1 hour</option>

@@ -4,7 +4,7 @@ import SettingsStorage from './settingsStorage'
 import Awake from './awake'
 import Counter from './counter'
 import Utils from './utils'
-import { SettingsChangeEvent, SettingsData } from './types'
+import { SettingsData } from './types'
 
 const saveIntervalTime = 15000; // Amount of time in millisecond it takes for counter changes to be saved
 
@@ -33,7 +33,7 @@ async function iterateCounter(counter: Counter): Promise<Counter> {
 
     const website = counter.websiteTime[hostname];
     // Send too much time spent notification
-    if (settings.notifications && website % (settings.notificationTimer as number) === 0) {
+    if (settings.notifications && website % parseInt(settings.notificationTimer as string) === 0) {
         browser.notifications.create({
             type: 'basic',
             iconUrl: browser.runtime.getURL('assets/icons/256px.png'),
@@ -51,8 +51,8 @@ async function main(): Promise<void> {
     // Initialize settings
     settings = await SettingsStorage.get();
     // Update settings on change
-    SettingsStorage.onChange((msg: SettingsChangeEvent) => {
-        settings = msg.settings;
+    SettingsStorage.onChange((newSettings: SettingsData) => {
+        settings = newSettings;
     });
 
     // Initialize counter

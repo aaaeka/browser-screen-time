@@ -2,8 +2,10 @@ import { browser } from 'webextension-polyfill-ts'
 import { SettingsData, SettingsDataType, MsgEvent, SettingsChangeEvent } from './types'
 
 export const defaultSettings: SettingsData = {
+    idleTimer: '15', // 15 seconds
+    videoCheck: true,
     notifications: false,
-    notificationTimer: 7200 // 2 hours
+    notificationTimer: '7200' // 2 hours
 }
 
 export default class SettingsStorage {
@@ -28,7 +30,12 @@ export default class SettingsStorage {
                 return;
             }
 
-            callback(message as SettingsChangeEvent);
+            callback((message as SettingsChangeEvent).settings);
         });
+    }
+
+    static async onChangeOrLoad(callback: Function): Promise<void> {
+        callback(await this.get());
+        this.onChange(callback);
     }
 }

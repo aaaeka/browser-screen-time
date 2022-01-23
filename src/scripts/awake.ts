@@ -1,5 +1,6 @@
 import { browser, Idle } from 'webextension-polyfill-ts'
-import { MsgEvent, PlayingMedia, PlayingMediaChangeEvent } from './types'
+import SettingsStorage from './settingsStorage'
+import { MsgEvent, PlayingMedia, PlayingMediaChangeEvent, SettingsData } from './types'
 
 export default class Awake {
     idle: boolean
@@ -11,13 +12,15 @@ export default class Awake {
         this.mediaPlaying = false;
         this.windowUnfocused = false;
 
-        // Idle config
-        const consideredIdleTime = 15; // Seconds
-        browser.idle.setDetectionInterval(consideredIdleTime);
+        // Set up settings
+        SettingsStorage.onChangeOrLoad((settings: SettingsData) => {
+            browser.idle.setDetectionInterval(parseInt(settings.idleTimer as string));
+            console.log('change')
+        });
 
         // Create events
         browser.idle.onStateChanged.addListener((state: Idle.IdleState) => {
-            this.idle = state == "locked" || state == "idle";
+            this.idle = state === 'locked' || state === 'idle';
         });
 
         // Keep track of how many different media sources are playing
@@ -28,15 +31,23 @@ export default class Awake {
             }
             const media = (message as PlayingMediaChangeEvent).playingMedia;
 
-            if (media.state === 'playing') {
-                currentlyPlaying.push(media);
-            } else {
-                // Remove the media if it matches
-                const sameMediaCheck = (item: PlayingMedia) => !(item.videoSource === media.videoSource && item.url === media.url);
-                currentlyPlaying = currentlyPlaying.filter(sameMediaCheck);
+            switch (media.state) {
+                case 'playing':
+                    currentlyPlaying.push(media);
+                    break;
+                case 'paused':
+                    // Remove the media if it matches
+                    const sameMediaCheck = (item: PlayingMedia) => !(item.videoSource === media.videoSource && item.url === media.url);
+                    currentlyPlaying = currentlyPlaying.filter(sameMediaCheck);
+                    break;
+                case 'stopAll':
+                    // Remove all media
+                    currentlyPlaying = [];
+                    break;
             }
+
             this.mediaPlaying = currentlyPlaying.length !== 0;
-            console.log(media, currentlyPlaying.length)
+            // console.log(media, currentlyPlaying.length)
         });
 
         browser.windows.onFocusChanged.addListener(async () => {
