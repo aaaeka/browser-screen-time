@@ -13,14 +13,17 @@ export default class Utils {
     }
 
     static formatTime(seconds: number): string {
-        const hours = Math.floor(seconds / 3600);
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor(seconds / 3600) % 24;
         const minutes = Math.floor(seconds / 60) % 60;
 
         let output = '';
-        output += hours ? `${hours}h ` : ''
-        output += minutes ? `${minutes}min ` : '';
-        // Show seconds only if hours is 0
-        output += !hours ? `${seconds % 60}s` : '';
+        output += days ? `${days}d ` : '';
+        output += hours ? `${hours}h ` : '';
+        // Show minutes only of days is 0
+        output += minutes && !days ? `${minutes}min ` : '';
+        // Show seconds only if hours and days is 0
+        output += !days && !hours ? `${seconds % 60}s` : '';
 
         return output.trim();
     }
