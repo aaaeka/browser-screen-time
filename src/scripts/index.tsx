@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import Info from './components/info'
 import Settings from './components/settings'
@@ -36,4 +36,10 @@ export default class Index extends React.Component<IndexProps, IndexState> {
     }
 }
 
-ReactDOM.render(<Index />, document.getElementById('root'));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
+    <React.StrictMode>
+        <Index />
+    </React.StrictMode>
+);

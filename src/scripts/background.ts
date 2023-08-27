@@ -6,7 +6,8 @@ import Counter from './counter'
 import Utils from './utils'
 import { SettingsData } from './types'
 
-const saveIntervalTime = 15000; // Amount of time in millisecond it takes for counter changes to be saved
+// Amount of time in milliseconds it takes for counter changes to be saved
+const saveIntervalTime = 15000;
 
 let settings: SettingsData;
 let currentTime: Date;
@@ -53,6 +54,7 @@ async function main(): Promise<void> {
     // Update settings on change
     SettingsStorage.onChange((newSettings: SettingsData) => {
         settings = newSettings;
+        console.log('Settings changed');
     });
 
     // Initialize counter
@@ -65,7 +67,7 @@ async function main(): Promise<void> {
         if (awake.available()) {
             counter = await iterateCounter(counter);
         } else {
-            console.log(`Considered idle! idle - ${awake.idle}, media - ${awake.mediaPlaying}, focus - ${awake.windowUnfocused}`);
+            // console.log(`Considered idle! idle - ${awake.idle}, media - ${awake.mediaPlaying}, focus - ${awake.windowUnfocused}`);
         }
     }, 1000)
 

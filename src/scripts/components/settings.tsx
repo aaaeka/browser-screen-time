@@ -53,15 +53,6 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
 
         // Send settings change message to background or popup
         browser.runtime.sendMessage(msg);
-
-        // Send settings change event to content script tabs
-        browser.tabs.query({
-            status: 'complete'
-        }).then((tabs: Array<Tabs.Tab>) => {
-            for (const tab of tabs) {
-                browser.tabs.sendMessage(tab.id, msg);
-            }
-        });
     }
 
     render() {

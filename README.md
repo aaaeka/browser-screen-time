@@ -10,10 +10,17 @@ Browser screen time is an extension which helps you track of the amount of time 
 ## Downloading the extension
 
 ### Chrome
-https://chrome.google.com/webstore/detail/browser-screen-time/nlkcecddkejakmaipagbcemeohfomedn
+[Chrome extension link](https://chrome.google.com/webstore/detail/browser-screen-time/nlkcecddkejakmaipagbcemeohfomedn)
 
 ### Firefox
-https://addons.mozilla.org/en-US/firefox/addon/browser-screen-time
+[Firefox addon link](https://addons.mozilla.org/en-US/firefox/addon/browser-screen-time)
 
 ## Building the extension
 Run ```npm install``` to install dependencies, then ```npm run dev``` to build, or ```npm run watch``` to build and then watch for changes.
+
+### Building for chrome
+Chrome manifest v3 no longer supports background scripts, instead moving to service_workers. Replace the line `"scripts": [ "background.js" ]` 
+with `"service_worker": "background.js"` and the extension should work with chrome. In the future this process could be automated.
+
+        
+        

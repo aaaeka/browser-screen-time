@@ -15,7 +15,6 @@ export default class Awake {
         // Set up settings
         SettingsStorage.onChangeOrLoad((settings: SettingsData) => {
             browser.idle.setDetectionInterval(parseInt(settings.idleTimer as string));
-            console.log('change')
         });
 
         // Create events
@@ -47,7 +46,6 @@ export default class Awake {
             }
 
             this.mediaPlaying = currentlyPlaying.length !== 0;
-            // console.log(media, currentlyPlaying.length)
         });
 
         browser.windows.onFocusChanged.addListener(async () => {

@@ -13,8 +13,7 @@ interface VideoElementWithEvents {
 let videoElements: Array<VideoElementWithEvents> = [];
 
 function createEvents(): void {
-    let videoElems = document.querySelectorAll('video:not(.bws-found)');
-    console.log('video check inside');
+    const videoElems = document.querySelectorAll('video:not(.bws-found)');
     for (const elem of videoElems) {
         elem.classList.add('bws-found');
         const changeEvent = {

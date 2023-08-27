@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { subDays } from 'date-fns'
 import CounterStorage from './counterStorage'
 import Counter from './counter'
@@ -15,8 +15,7 @@ import '../styles/popup.scss'
 interface PopupProps {
 }
 
-interface PopupState {
-    selectedTab: number,
+interface PopupState {selectedTab: number,
     counter: Counter,
     mostUsedSites: Array<WebsiteData>
 }
@@ -119,4 +118,10 @@ class Popup extends React.Component<PopupProps, PopupState> {
     }
 }
 
-ReactDOM.render(<Popup />, document.getElementById('root'));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
+    <React.StrictMode>
+        <Popup />
+    </React.StrictMode>
+);
