@@ -66,7 +66,29 @@ async function main(): Promise<void> {
     setInterval(async () => {
         if (awake.available()) {
             counter = await iterateCounter(counter);
+            browser.action.setIcon({
+                path: {
+                    16: "assets/icons/16px.png",
+                    32: "assets/icons/32px.png",
+                    64: "assets/icons/64px.png",
+                    128: "assets/icons/128px.png",
+                    256: "assets/icons/256px.png",
+                    512: "assets/icons/512px.png",
+                    1024: "assets/icons/1024px.png"
+                }
+            });
         } else {
+            browser.action.setIcon({
+                path: {
+                    16: "assets/icons/disabled/16px.png",
+                    32: "assets/icons/disabled/32px.png",
+                    64: "assets/icons/disabled/64px.png",
+                    128: "assets/icons/disabled/128px.png",
+                    256: "assets/icons/disabled/256px.png",
+                    512: "assets/icons/disabled/512px.png",
+                    1024: "assets/icons/disabled/1024px.png"
+                }
+            });
             // console.log(`Considered idle! idle - ${awake.idle}, media - ${awake.mediaPlaying}, focus - ${awake.windowUnfocused}`);
         }
     }, 1000)
