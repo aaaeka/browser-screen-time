@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { subDays } from 'date-fns'
 import CounterStorage from './counterStorage'
 import Counter from './counter'
-import { browser } from 'webextension-polyfill-ts'
+import browser from 'webextension-polyfill'
 import { WebsiteData, CounterTimespanData } from './types'
 
 import TabButton from './components/tabButton'
@@ -15,7 +15,8 @@ import '../styles/popup.scss'
 interface PopupProps {
 }
 
-interface PopupState {selectedTab: number,
+interface PopupState {
+    selectedTab: number,
     counter: Counter,
     mostUsedSites: Array<WebsiteData>
 }
@@ -54,8 +55,9 @@ class Popup extends React.Component<PopupProps, PopupState> {
     async componentDidMount() {
         let counter = await CounterStorage.get(this.timespans[this.state.selectedTab].interval);
 
-        this.setState({ counter: counter,
-                        mostUsedSites: counter.mostUsed()
+        this.setState({
+            counter: counter,
+            mostUsedSites: counter.mostUsed()
         });
     }
 
@@ -66,11 +68,11 @@ class Popup extends React.Component<PopupProps, PopupState> {
 
         let counter = await CounterStorage.get(this.timespans[newTab].interval);
 
-        this.setState({ 
+        this.setState({
             selectedTab: newTab,
             counter: counter,
             mostUsedSites: counter.mostUsed()
-        }); 
+        });
     }
 
     openInfoPage() {
@@ -104,7 +106,7 @@ class Popup extends React.Component<PopupProps, PopupState> {
                 <div className="tabButtons">
                     {tabButtons}
                 </div>
-                <TimeCircle 
+                <TimeCircle
                     netTime={this.state.counter ? this.state.counter.netTime : null}
                     subtitle={this.timespans[this.state.selectedTab].fullName}
                     mostUsedSites={this.state.mostUsedSites}

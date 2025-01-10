@@ -1,4 +1,4 @@
-import { browser } from 'webextension-polyfill-ts'
+import browser from 'webextension-polyfill'
 import CounterStorage from './counterStorage'
 import SettingsStorage from './settingsStorage'
 import Awake from './awake'

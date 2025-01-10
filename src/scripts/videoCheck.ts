@@ -1,4 +1,4 @@
-import { browser } from 'webextension-polyfill-ts'
+import browser from 'webextension-polyfill'
 import SettingsStorage from './settingsStorage'
 import { PlayingMediaChangeEvent, SettingsData } from './types'
 

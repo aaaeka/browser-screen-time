@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { browser, Tabs } from 'webextension-polyfill-ts'
+import browser from 'webextension-polyfill'
 import SettingsStorage from '../settingsStorage'
 import { SettingsData, SettingsDataType, SettingsChangeEvent } from '../types'
 
@@ -93,7 +93,7 @@ export default class Settings extends React.Component<SettingsProps, SettingsSta
         return (
             <div className="settings">
                 {mainContent}
-                <footer>made by <a href="https://github.com/aaaeka" style={{color: "#227C9D"}}>aaaeka</a> | <a href="https://github.com/aaaeka/browser-screen-time" style={{color: "#17C3B2"}}>source code</a> | <a href="http://www.gnu.org/licenses/lgpl-3.0.html" style={{color: "#FE6D73"}}>license</a></footer>
+                <footer>made by <a href="https://github.com/aaaeka" style={{ color: "#227C9D" }}>aaaeka</a> | <a href="https://github.com/aaaeka/browser-screen-time" style={{ color: "#17C3B2" }}>source code</a> | <a href="http://www.gnu.org/licenses/lgpl-3.0.html" style={{ color: "#FE6D73" }}>license</a></footer>
             </div>
         )
     }

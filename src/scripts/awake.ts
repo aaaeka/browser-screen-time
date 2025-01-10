@@ -1,4 +1,4 @@
-import { browser, Idle } from 'webextension-polyfill-ts'
+import browser, { Idle } from 'webextension-polyfill'
 import SettingsStorage from './settingsStorage'
 import { MsgEvent, PlayingMedia, PlayingMediaChangeEvent, SettingsData } from './types'
 

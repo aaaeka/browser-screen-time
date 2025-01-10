@@ -1,4 +1,4 @@
-import { browser } from 'webextension-polyfill-ts'
+import browser from 'webextension-polyfill'
 import { SettingsData, SettingsDataType, MsgEvent, SettingsChangeEvent } from './types'
 
 export const defaultSettings: SettingsData = {

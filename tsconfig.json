@@ -5,6 +5,7 @@
         "target": "es2020",
         "jsx": "react",
         "allowJs": false,
+        "allowSyntheticDefaultImports": true,
         "moduleResolution": "node"
     }
 }

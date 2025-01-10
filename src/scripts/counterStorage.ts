@@ -1,7 +1,7 @@
 import Utils from './utils'
 import Counter from './counter'
 import { CounterTimespanInterval } from './types'
-import { browser } from 'webextension-polyfill-ts'
+import browser from 'webextension-polyfill'
 import { isEqual, addDays, isAfter } from 'date-fns'
 
 export default class CounterStorage {
@@ -21,7 +21,7 @@ export default class CounterStorage {
             if (data) {
                 return new Counter(data.netTime, data.websiteTime);
             }
-            
+
             return new Counter;
         }
 
@@ -44,11 +44,11 @@ export default class CounterStorage {
 
         return accumalativeCounter;
     }
-    
+
     static async getSavedDates(): Promise<Array<Date>> {
         const allData = await browser.storage.local.get();
         let dates: Array<Date> = [];
-        
+
         for (const key of Object.keys(allData)) {
             // Only parse keys that start with 20
             // I guess it wont work in the 22nd century
@@ -57,9 +57,9 @@ export default class CounterStorage {
                 continue;
             }
 
-            dates.push(new Date(key)) 
+            dates.push(new Date(key))
         }
-        
+
         return dates;
     }
 }
