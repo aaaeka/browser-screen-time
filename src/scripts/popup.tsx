@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { subDays } from 'date-fns'
 import CounterStorage from './counterStorage'
@@ -120,10 +120,16 @@ class Popup extends React.Component<PopupProps, PopupState> {
     }
 }
 
-const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(
-    <React.StrictMode>
-        <Popup />
-    </React.StrictMode>
-);
+(function() {
+    const container = document.getElementById('root');
+    if (!container) {
+        return;
+    }
+
+    const root = createRoot(container);
+    root.render(
+        <React.StrictMode>
+            <Popup />
+        </React.StrictMode>
+    );
+})()

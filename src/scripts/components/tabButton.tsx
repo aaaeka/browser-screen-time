@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 interface TabButtonProps {
     tabIndex: number,
@@ -8,12 +8,14 @@ interface TabButtonProps {
     onClick: Function
 }
 
-export default function TabButton(props: TabButtonProps) {
+const TabButton = (props: TabButtonProps) => {
     return (
-        <button 
-            className={`${props.shortName} ${props.tabIndex === props.selectedIndex ? 'active': ''}`}
+        <button
+            className={`${props.shortName} ${props.tabIndex === props.selectedIndex ? 'active' : ''}`}
             onClick={() => props.onClick()} >
             {props.fullName}
         </button>
     )
 }
+
+export default TabButton;

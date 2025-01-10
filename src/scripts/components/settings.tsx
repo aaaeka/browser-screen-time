@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import browser from 'webextension-polyfill'
 import SettingsStorage from '../settingsStorage'
 import { SettingsData, SettingsDataType, SettingsChangeEvent } from '../types'

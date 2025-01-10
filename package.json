@@ -24,10 +24,9 @@
   },
   "homepage": "https://github.com/aaaeka/browser-screen-time#readme",
   "devDependencies": {
-    "@types/chrome": "^0.0.244",
-    "@types/react": "^18.2.21",
-    "@types/react-datepicker": "^4.15.0",
-    "@types/react-dom": "^18.2.7",
+    "@types/chrome": "^0.0.293",
+    "@types/react": "^19.0.4",
+    "@types/react-dom": "^19.0.2",
     "@types/webextension-polyfill": "^0.10.2",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
@@ -40,10 +39,10 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "date-fns": "^2.30.0",
-    "react": "^18.2.0",
-    "react-datepicker": "^4.16.0",
-    "react-dom": "^18.2.0",
+    "date-fns": "^4.1.0",
+    "react": "^19.0.0",
+    "react-datepicker": "^7.6.0",
+    "react-dom": "^19.0.0",
     "webextension-polyfill": "^0.12.0"
   }
 }
