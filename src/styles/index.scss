@@ -125,6 +125,20 @@
         }
     }
 
+    .button {
+        display: inline-flex;
+        align-items: center;
+        height: 36px;
+        padding: 8px;
+        margin-right: 8px;
+        background-color: white;
+        border: 1px solid #C4C4C4;
+
+        &:hover {
+            background-color: #E5E5E5;
+        }
+    }
+
     .smallButton {
         position: absolute;
         display: flex;
@@ -146,6 +160,22 @@
 
         &:hover {
             background-color: #E5E5E5;
+        }
+    }
+
+    .notification {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #C4C4C4;
+        margin-bottom: 16px;
+        border-radius: 3px;
+
+        &.success {
+            border-color: #5CB85C;
+        }
+
+        &.error {
+            border-color: #BB2124;
         }
     }
 }

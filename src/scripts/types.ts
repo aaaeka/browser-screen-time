@@ -1,3 +1,5 @@
+import { CounterDailyData } from "./counter";
+
 export interface WebsiteData {
     time: number,
     color: string,
@@ -42,4 +44,9 @@ export interface SettingsData {
 export interface SettingsChangeEvent extends MsgEvent {
     type: 'settings',
     settings: SettingsData
+}
+
+export interface CounterOverwriteEvent extends MsgEvent {
+    type: 'counter',
+    counter: CounterDailyData | null
 }

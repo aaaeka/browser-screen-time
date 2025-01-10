@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill'
 import CounterStorage from './counterStorage'
 import SettingsStorage from './settingsStorage'
 import Awake from './awake'
-import Counter from './counter'
+import Counter, { CounterDailyData } from './counter'
 import Utils from './utils'
 import { SettingsData } from './types'
 
@@ -60,6 +60,11 @@ async function main(): Promise<void> {
     // Initialize counter
     let counter = await CounterStorage.get();
     currentTime = new Date;
+
+    CounterStorage.onOverwrite((counterData: CounterDailyData | null) => {
+        counter = counterData ? Counter.constructFromDailyData(counterData) : new Counter();
+        console.log('Counter overwriten');
+    });
 
     // Main loop
     const awake = new Awake;

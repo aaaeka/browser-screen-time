@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react'
 import browser from 'webextension-polyfill'
 import SettingsStorage from '../settingsStorage'
 import { SettingsData, SettingsDataType, SettingsChangeEvent } from '../types'
+import { format } from 'date-fns'
+import CounterStorage from '../counterStorage'
+import Notification, { NotificationData, NotificationTypeEnum } from './notification'
 
 const Settings = () => {
     const [settings, setSettings] = useState<SettingsData | null>(null);
+    const [notification, setNotification] = useState<NotificationData>({ type: NotificationTypeEnum.NONE, message: '' });
 
     useEffect(() => {
         const setInitialSettings = async () => {
@@ -44,8 +48,77 @@ const Settings = () => {
         browser.runtime.sendMessage(msg);
     }
 
+    const exportData = async () => {
+        const exportData = await CounterStorage.getAllJSONString();
+
+        const currentDay = format(new Date(), 'yyyy-MM-dd');
+        const fileName = `browser-screen-time-${currentDay}.json`;
+
+        const blob = new Blob([exportData], { type: 'application/json' });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setNotification({ type: NotificationTypeEnum.SUCCESS, message: 'Successfully exported time data' });
+    }
+
+    const pickFile = (): Promise<object> => {
+        return new Promise((resolve, reject) => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+
+            input.addEventListener('change', (event: Event) => {
+                const target = event.target as HTMLInputElement;
+                const file = target.files?.[0];
+                if (!file) {
+                    return reject(new Error('No file selected'));
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                    try {
+                        const jsonObject = JSON.parse(reader.result as string);
+                        resolve(jsonObject);
+                    } catch (error) {
+                        reject(new Error('Invalid JSON format'));
+                    }
+                };
+                reader.onerror = () => reject(new Error('Error reading file'));
+                reader.readAsText(file);
+            });
+
+            input.click();
+        });
+    }
+
+    const overwriteData = async () => {
+        try {
+            const newData = await pickFile();
+            await CounterStorage.overwriteStorage(newData);
+            setNotification({ type: NotificationTypeEnum.SUCCESS, message: 'Successfully overwriten time data' });
+        } catch (error) {
+            setNotification({ type: NotificationTypeEnum.ERROR, message: `Failed to overwrite data: ${error.message}` });
+        }
+    }
+
+    const mergeData = async () => {
+        try {
+            const newData = await pickFile();
+            await CounterStorage.mergeStorage(newData);
+            setNotification({ type: NotificationTypeEnum.SUCCESS, message: 'Successfully merged time data' });
+        } catch (error) {
+            setNotification({ type: NotificationTypeEnum.ERROR, message: `Failed to merge data: ${error.message}` });
+        }
+    }
+
     return (
         <div className="settings">
+            <Notification {...notification} />
             {settings && (
                 <form>
                     <h1>Settings</h1>
@@ -77,6 +150,10 @@ const Settings = () => {
                             <option value="14400">4 hours</option>
                         </select>
                     </div>
+                    <h2>Data</h2>
+                    <button className="button" type="button" onClick={exportData}>Export</button>
+                    <button className="button" type="button" onClick={overwriteData}>Import (overwrite current time)</button>
+                    <button className="button" type="button" onClick={mergeData}>Import (add to current time)</button>
                 </form>
             )}
             <footer>made by <a href="https://github.com/aaaeka" style={{ color: "#227C9D" }}>aaaeka</a> | <a href="https://github.com/aaaeka/browser-screen-time" style={{ color: "#17C3B2" }}>source code</a> | <a href="http://www.gnu.org/licenses/lgpl-3.0.html" style={{ color: "#FE6D73" }}>license</a></footer>
