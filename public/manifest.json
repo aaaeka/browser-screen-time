@@ -5,7 +5,7 @@
     "description": "Keep track of the amount of time you spend on the internet",
     "browser_specific_settings": {
         "gecko": {
-            "id": "68e1a6af-c5f7-4cb2-ad46-170e1a2acd01",
+            "id": "{68e1a6af-c5f7-4cb2-ad46-170e1a2acd01}",
             "strict_min_version": "109.0"
         }
     },
