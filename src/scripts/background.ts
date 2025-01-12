@@ -9,6 +9,8 @@ import { SettingsData } from './types'
 // Amount of time in milliseconds it takes for counter changes to be saved
 const saveIntervalTime = 15000;
 
+const extensionUUID = Utils.getExtensionUUID();
+
 let settings: SettingsData;
 let currentTime: Date;
 
@@ -20,13 +22,13 @@ async function iterateCounter(counter: Counter): Promise<Counter> {
     }
 
     let tab = (await browser.tabs.query({ currentWindow: true, active: true }))[0];
-    if (!tab) {
+    if (!tab || !tab.url) {
         return counter;
     }
 
     const url = new URL(tab.url);
     const hostname = url.hostname;
-    if (!hostname) {
+    if (!hostname || hostname === extensionUUID) {
         return counter;
     }
 

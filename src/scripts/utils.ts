@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill';
+
 export default class Utils {
     static formatDate(date: Date): string {
         return `${date.getFullYear()} ${date.getMonth() + 1} ${date.getDate()}`;
@@ -26,6 +28,19 @@ export default class Utils {
         output += !days && !hours ? `${seconds % 60}s` : '';
 
         return output.trim();
+    }
+
+    static getExtensionUUID(): string {
+        // Browser UUID is different in both browsers so different calls
+        // need to be made depending on the browsers
+        // This call will succeed only in Firefox
+        if (typeof browser.runtime.getBrowserInfo === 'function') {
+            const url = browser.runtime.getURL('manifest.json');
+            const match = url.match(/^moz-extension:\/\/([^\/]+)\//);
+            return match ? match[1] : '';
+        }
+
+        return browser.runtime.id;
     }
 
     static isValidCounterData(data: unknown): boolean {
