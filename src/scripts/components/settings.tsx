@@ -97,6 +97,10 @@ const Settings = () => {
     }
 
     const overwriteData = async () => {
+        if (!window.confirm('Are you sure you want to overwrite the current time data? This process is not reversible.')) {
+            return;
+        }
+
         try {
             const newData = await pickFile();
             await CounterStorage.overwriteStorage(newData);
@@ -107,6 +111,10 @@ const Settings = () => {
     }
 
     const mergeData = async () => {
+        if (!window.confirm('Are you sure you want to add time data to the current data? This process is not reversible.')) {
+            return;
+        }
+
         try {
             const newData = await pickFile();
             await CounterStorage.mergeStorage(newData);
