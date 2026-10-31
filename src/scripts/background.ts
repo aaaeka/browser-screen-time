@@ -14,19 +14,36 @@ const extensionUUID = Utils.getExtensionUUID();
 let settings: SettingsData;
 let currentTime: Date;
 
-async function iterateCounter(counter: Counter): Promise<Counter> {
-    // If it's a new day return a new counter
-    if (new Date().getDate() != currentTime.getDate()) {
-        currentTime = new Date;
-        return await CounterStorage.get();
+// If it's a new day, save the current counter for the outgoing day and load the new day's counter.
+// This runs on every tick (even when idle) so a stale counter is never saved under the new day's key.
+async function rollOverIfNewDay(counter: Counter): Promise<Counter> {
+    const today = new Date();
+    if (Utils.formatDate(today) === Utils.formatDate(currentTime)) {
+        return counter;
     }
 
-    let tab = (await browser.tabs.query({ currentWindow: true, active: true }))[0];
+    await CounterStorage.set(counter, currentTime);
+    const newCounter = await CounterStorage.get();
+    currentTime = today;
+    return newCounter;
+}
+
+function iterateCounter(counter: Counter, tab: browser.Tabs.Tab | undefined): Counter {
     if (!tab || !tab.url) {
         return counter;
     }
 
-    const url = new URL(tab.url);
+    let url: URL;
+    try {
+        url = new URL(tab.url);
+    } catch {
+        return counter;
+    }
+
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        return counter;
+    }
+
     const hostname = url.hostname;
     if (!hostname || hostname === extensionUUID) {
         return counter;
@@ -50,6 +67,25 @@ async function iterateCounter(counter: Counter): Promise<Counter> {
     return counter;
 }
 
+let lastIconActive: boolean | undefined;
+
+// Setting the icon decodes the image files each time, so only do it when the state changes
+function updateIcon(active: boolean): void {
+    if (active === lastIconActive) {
+        return;
+    }
+    lastIconActive = active;
+    const folder = active ? 'assets/icons' : 'assets/icons/disabled';
+    browser.action.setIcon({
+        path: {
+            16: `${folder}/16px.png`,
+            32: `${folder}/32px.png`,
+            64: `${folder}/64px.png`,
+            128: `${folder}/128px.png`
+        }
+    }).catch(() => { lastIconActive = undefined; });
+}
+
 async function main(): Promise<void> {
     // Initialize settings
     settings = await SettingsStorage.get();
@@ -70,41 +106,33 @@ async function main(): Promise<void> {
 
     // Main loop
     const awake = new Awake;
+    let tickRunning = false;
     setInterval(async () => {
-        if (awake.available()) {
-            counter = await iterateCounter(counter);
-            browser.action.setIcon({
-                path: {
-                    16: "assets/icons/16px.png",
-                    32: "assets/icons/32px.png",
-                    64: "assets/icons/64px.png",
-                    128: "assets/icons/128px.png",
-                    256: "assets/icons/256px.png",
-                    512: "assets/icons/512px.png",
-                    1024: "assets/icons/1024px.png"
-                }
-            });
-        } else {
-            browser.action.setIcon({
-                path: {
-                    16: "assets/icons/disabled/16px.png",
-                    32: "assets/icons/disabled/32px.png",
-                    64: "assets/icons/disabled/64px.png",
-                    128: "assets/icons/disabled/128px.png",
-                    256: "assets/icons/disabled/256px.png",
-                    512: "assets/icons/disabled/512px.png",
-                    1024: "assets/icons/disabled/1024px.png"
-                }
-            });
-            // console.log(`Considered idle! idle - ${awake.idle}, media - ${awake.mediaPlaying}, focus - ${awake.windowUnfocused}`);
+        // Skip overlapping ticks so counter updates and the day rollover can't interleave
+        if (tickRunning) {
+            return;
+        }
+        tickRunning = true;
+        try {
+            await tick();
+        } finally {
+            tickRunning = false;
         }
     }, 1000)
 
-    // Save loop
-    setInterval(async () => {
-        if (awake.available()) {
-            await CounterStorage.set(counter);
+    async function tick(): Promise<void> {
+        counter = await rollOverIfNewDay(counter);
+        const tab = (await browser.tabs.query({ lastFocusedWindow: true, active: true }))[0];
+        const active = awake.available(tab);
+        if (active) {
+            counter = iterateCounter(counter, tab);
         }
+        updateIcon(active);
+    }
+
+    // Save loop - persist counter every interval regardless of active/idle state
+    setInterval(async () => {
+        await CounterStorage.set(counter, currentTime);
     }, saveIntervalTime)
 }
 

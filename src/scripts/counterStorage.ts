@@ -5,8 +5,8 @@ import browser from 'webextension-polyfill'
 import { isEqual, addDays, isAfter } from 'date-fns'
 
 export default class CounterStorage {
-    static async set(counter: Counter) {
-        browser.storage.local.set({ [Utils.getTodaysDate()]: counter });
+    static async set(counter: Counter, date: Date = new Date()): Promise<void> {
+        await browser.storage.local.set({ [Utils.formatDate(date)]: counter });
     }
 
     static async getSingleDay(date: Date): Promise<Counter> {
